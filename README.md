@@ -61,14 +61,29 @@ eBPF ashish/
 ├── README.md                # this file
 ├── common/
 │   └── vmlinux.h            # generated kernel types (git-ignored, see below)
-└── 01-hello/
-    ├── hello.bpf.c          # first program: kprobe on execve + bpf_printk
-    ├── CONCEPTS.md           # foundational vocabulary, explained in order
-    └── BASIC_FLOW_CHART.md   # diagrams of the load → attach → run lifecycle
+├── 01-hello/
+│   ├── hello.bpf.c          # first program: kprobe on execve + bpf_printk
+│   ├── CONCEPTS.md           # foundational vocabulary, explained in order
+│   └── BASIC_FLOW_CHART.md   # diagrams of the load → attach → run lifecycle
+├── 02-kprobe-unlink/
+│   ├── kprobe-unlink.bpf.c  # kprobe + kretprobe on do_unlinkat; BPF_CORE_READ
+│   ├── CONCEPTS.md           # entry vs return, safe kernel reads, CO-RE
+│   └── BASIC_FLOW_CHART.md   # two-probe timeline + read-helper boundary
+├── 03-fentry-unlink/
+│   ├── fentry-link.bpf.c    # fentry + fexit on do_unlinkat; direct field reads
+│   ├── CONCEPTS.md           # trampoline, BTF, direct args, BPF_PROG macro
+│   └── BASIC_FLOW_CHART.md   # trampoline pipeline + entry/exit timeline
+├── 04-opensnoop/
+│   ├── opensnoop.bpf.c      # tracepoint on sys_enter_openat; PID filter
+│   ├── CONCEPTS.md           # tracepoints, const volatile globals, kernel filter
+│   └── BASIC_FLOW_CHART.md   # pipeline + filter-decision tree + .rodata timing
+└── 05-bashreadline/
+    ├── bashreadline.bpf.c   # uretprobe on /bin/bash:readline; user-space read
+    ├── CONCEPTS.md           # uprobes, file-based hooks, bpf_probe_read_user_str
+    └── BASIC_FLOW_CHART.md   # pipeline + kernel/user memory boundary diagram
 ```
 
-More lessons (`02-loader`, `03-maps`, `04-ringbuf`, ...) get added as the plan
-progresses.
+More lessons (`06-ringbuf`, ...) get added as the plan progresses.
 
 ---
 
@@ -194,6 +209,17 @@ A curated list, roughly ordered from "start here" to "go deep."
 
 - [x] **Week 1 — Environment + first program.** `01-hello` compiles, loads, and
   prints on every `execve` via a kprobe + `bpf_printk`.
+- [x] **kprobe/kretprobe — file deletion monitor.** `02-kprobe-unlink` hooks
+  `do_unlinkat` on entry + return, reading the filename with `BPF_CORE_READ`.
+- [x] **fentry/fexit — modern file deletion monitor.** `03-fentry-unlink` hooks
+  the same function via a BPF trampoline, reads fields directly, and sees the
+  return value alongside the arguments in `fexit`.
+- [x] **Tracepoint + global variables — file-open snooper.** `04-opensnoop` hooks
+  the stable `sys_enter_openat` tracepoint and filters by PID in the kernel using
+  a `const volatile` global variable (`.rodata`) set from user space before load.
+- [x] **Uprobe/uretprobe — bash command sniffer.** `05-bashreadline` hooks
+  `readline`'s return inside `/bin/bash` itself, crossing the kernel/user-space
+  boundary with `bpf_probe_read_user_str` to capture every typed command line.
 - [ ] Week 2 — libbpf skeleton + C user-space loader.
 - [ ] Week 3 — Maps (per-PID syscall counter).
 - [ ] Week 4 — Ring buffer event streaming.
