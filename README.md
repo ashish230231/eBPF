@@ -77,13 +77,17 @@ eBPF ashish/
 │   ├── opensnoop.bpf.c      # tracepoint on sys_enter_openat; PID filter
 │   ├── CONCEPTS.md           # tracepoints, const volatile globals, kernel filter
 │   └── BASIC_FLOW_CHART.md   # pipeline + filter-decision tree + .rodata timing
-└── 05-bashreadline/
-    ├── bashreadline.bpf.c   # uretprobe on /bin/bash:readline; user-space read
-    ├── CONCEPTS.md           # uprobes, file-based hooks, bpf_probe_read_user_str
-    └── BASIC_FLOW_CHART.md   # pipeline + kernel/user memory boundary diagram
+├── 05-bashreadline/
+│   ├── bashreadline.bpf.c   # uretprobe on /bin/bash:readline; user-space read
+│   ├── CONCEPTS.md           # uprobes, file-based hooks, bpf_probe_read_user_str
+│   └── BASIC_FLOW_CHART.md   # pipeline + kernel/user memory boundary diagram
+└── 06-sigsnoop/
+    ├── sigsnoop.bpf.c       # kill() entry/exit tracepoints correlated via hash map
+    ├── CONCEPTS.md           # BPF_MAP_TYPE_HASH, update/lookup/delete_elem, TID keys
+    └── BASIC_FLOW_CHART.md   # map-as-mailbox lifecycle + entry/exit ctx diagram
 ```
 
-More lessons (`06-ringbuf`, ...) get added as the plan progresses.
+More lessons (`07-ringbuf`, ...) get added as the plan progresses.
 
 ---
 
@@ -220,6 +224,9 @@ A curated list, roughly ordered from "start here" to "go deep."
 - [x] **Uprobe/uretprobe — bash command sniffer.** `05-bashreadline` hooks
   `readline`'s return inside `/bin/bash` itself, crossing the kernel/user-space
   boundary with `bpf_probe_read_user_str` to capture every typed command line.
+- [x] **Hash maps — signal sniffer.** `06-sigsnoop` correlates `kill()`'s entry
+  and exit tracepoints through a `BPF_MAP_TYPE_HASH` keyed by TID, combining
+  data from two separate events into one printed record.
 - [ ] Week 2 — libbpf skeleton + C user-space loader.
 - [ ] Week 3 — Maps (per-PID syscall counter).
 - [ ] Week 4 — Ring buffer event streaming.
