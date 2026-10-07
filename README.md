@@ -59,6 +59,17 @@ a C/C++ loader later).
 eBPF ashish/
 ├── LEARNING_PLAN.md         # 12-week curriculum
 ├── README.md                # this file
+├── basics/                  # prerequisite knowledge map, true basics → production sensors
+│   ├── README.md             # reading order
+│   ├── 00-glossary.md        # every abbreviation (PID, TGID, BTF, CO-RE, LSM, XDP...)
+│   ├── 01-os-fundamentals.md
+│   ├── 02-c-and-toolchain-fundamentals.md
+│   ├── 03-ebpf-execution-model.md
+│   ├── 04-btf-and-core.md
+│   ├── 05-hook-points-catalog.md
+│   ├── 06-maps-and-state.md
+│   ├── 07-streaming-to-userspace.md
+│   └── 08-production-sensor-patterns.md
 ├── common/
 │   └── vmlinux.h            # generated kernel types (git-ignored, see below)
 ├── 01-hello/
